@@ -109,7 +109,7 @@ RSpec.describe Bindup do
     expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
-  it "does calls a DELETE json API endpoint" do
+  it "does calls a DELETE json API endpoint with json payload" do
     params = { test: "test" }
     response_body, = Bindup::Telco::V2.third_test_api(params, body: params)
 
