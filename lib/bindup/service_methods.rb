@@ -43,8 +43,13 @@ module Bindup
       version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil, options: nil|
         params = version_class.send(:build_params, options, params)
         headers = version_class.send(:build_headers, options, headers)
+        body = version_class.send(:build_body, options, options["body"], force_build: true) if METHODS_WITH_QUERY.include?(http_method.to_s)
 
-        response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
+        if body.present? && METHODS_WITH_QUERY.include?(http_method.to_s)
+          response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) { |req| req.body = body }
+        else
+          response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
+        end
         [response&.body, response&.headers]
       end
     end
@@ -60,17 +65,18 @@ module Bindup
     end
 
     def request_method_build(version_class)
-      version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil|
-        options = version_class.send(:build_options, api)
+      version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil, body: nil|
+        options = version_class.send(:build_options, api, body)
+
         version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
-                           params: params, headers: headers, options: options)
+                                     params: params, headers: headers, options: options)
       end
     end
 
     def api_methods(version_class, version)
       version["apis"].each do |api|
-        version_class.define_singleton_method(api["name"].to_sym) do |params = nil, headers = nil|
-          version_class.send(:request_method_build, api: api, params: params&.stringify_keys, headers: headers&.stringify_keys)
+        version_class.define_singleton_method(api["name"].to_sym) do |params = nil, headers = nil, body: nil|
+          version_class.send(:request_method_build, api: api, params: params&.stringify_keys, headers: headers&.stringify_keys, body: body&.stringify_keys)
         end
       end
     end
@@ -87,15 +93,15 @@ module Bindup
     end
 
     def build_options(version_class)
-      version_class.define_singleton_method(:build_options) do |api|
-        { "base_url" => api["base_url"], "type" => (api["type"]), "http_method" => api["verb"].downcase }
+      version_class.define_singleton_method(:build_options) do |api, body|
+        { "base_url" => api["base_url"], "type" => (api["type"]), "http_method" => api["verb"].downcase, "body" => body }
       end
     end
 
     def build_params(version_class)
-      version_class.define_singleton_method(:build_params) do |options, params|
+      version_class.define_singleton_method(:build_params) do |options, params, force_build: false|
         return params if params.blank? || options.blank? || options["type"].blank?
-        return params if options["http_method"].present? && METHODS_WITH_QUERY.include?(options["http_method"])
+        return params if !force_build && options["http_method"].present? && METHODS_WITH_QUERY.include?(options["http_method"])
 
         case options["type"].downcase
         when "json"
@@ -126,6 +132,12 @@ module Bindup
         end
 
         headers
+      end
+    end
+
+    def methods_as_alias(version_class)
+      version_class.define_singleton_method(:build_body) do |options, params, force_build: false|
+        version_class.send(:build_params, options, params, force_build: force_build)
       end
     end
 
