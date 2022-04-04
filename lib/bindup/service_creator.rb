@@ -30,6 +30,7 @@ module Bindup
             build_params(version_class)
             build_headers(version_class)
             api_methods(version_class, version)
+            methods_as_alias(version_class)
             methods_as_private(version_class)
           end
         end
