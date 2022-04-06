@@ -39,66 +39,82 @@ RSpec.describe Bindup do
   end
 
   it "does calls a GET API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.first_test_api
+    response_body, = Bindup::BSSMW::V1.first_test_api
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["data"]).to eq(nil)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/json")
   end
 
   it "does calls a POST json API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/json" },
-                                                                        params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" })
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(JSON.parse(response_body)["data"])).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/test")
   end
 
   it "does calls a POST json API endpoint without parameters" do
-    response_body, response_headers = Bindup::BSSMW::V1.second_test_api
+    response_body, = Bindup::BSSMW::V1.second_test_api
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["data"]).to eq("")
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/json")
   end
 
   it "does calls a POST urlencoded API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.third_test_api(params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::BSSMW::V1.third_test_api(params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["form"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
   it "does calls a PUT json API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.fourth_test_api(params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::BSSMW::V1.fourth_test_api(params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(JSON.parse(response_body)["data"])).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/json")
   end
 
   it "does calls a PUT urlencoded API endpoint" do
-    response_body, response_headers = Bindup::Telco::V2.first_test_api(params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::Telco::V2.first_test_api(params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["form"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
   it "does calls a DELETE json API endpoint" do
-    response_body, response_headers = Bindup::Telco::V2.third_test_api(params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::Telco::V2.third_test_api(params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["args"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/json")
   end
 
   it "does calls a DELETE urlencoded API endpoint" do
-    response_body, response_headers = Bindup::Telco::V2.second_test_api(params: { test: "test" })
+    params = { test: "test" }
+    response_body, = Bindup::Telco::V2.second_test_api(params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["args"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
-  it "does calls a DELETE urlencoded API endpoint without named parameters" do
-    response_body, response_headers = Bindup::Telco::V2.second_test_api({ test: "test" })
+  it "does calls a DELETE urlencoded API endpoint with form payload" do
+    params = { test: "test" }
+    response_body, = Bindup::Telco::V2.second_test_api(params, body: params)
 
-    expect(response_body).not_to eq(nil)
-    expect(response_headers).not_to eq(nil)
+    expect(JSON.parse(response_body)["args"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["form"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
+  end
+
+  it "does calls a DELETE json API endpoint" do
+    params = { test: "test" }
+    response_body, = Bindup::Telco::V2.third_test_api(params, body: params)
+
+    expect(JSON.parse(response_body)["args"]).to eq(params.stringify_keys)
+    expect(JSON.parse(JSON.parse(response_body)["data"])).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/json")
   end
 end
