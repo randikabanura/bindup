@@ -69,7 +69,7 @@ module Bindup
 
     def api_methods(version_class, version)
       version["apis"].each do |api|
-        version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
+        version_class.define_singleton_method(api["name"].to_sym) do |params = nil, headers = nil|
           version_class.send(:request_method_build, api: api, params: params&.stringify_keys, headers: headers&.stringify_keys)
         end
       end
