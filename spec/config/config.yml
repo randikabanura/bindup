@@ -46,4 +46,4 @@ components:
             base_url: "https://httpbin.org"
             url: "delete"
             verb: "DELETE"
-            type: "urlencoded"
+            type: "json"
