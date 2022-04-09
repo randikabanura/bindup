@@ -53,6 +53,13 @@ RSpec.describe Bindup do
     expect(response_headers).not_to eq(nil)
   end
 
+  it "does calls a POST json API endpoint without parameters" do
+    response_body, response_headers = Bindup::BSSMW::V1.second_test_api
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
   it "does calls a POST urlencoded API endpoint" do
     response_body, response_headers = Bindup::BSSMW::V1.third_test_api(params: { test: "test" })
 
@@ -83,6 +90,13 @@ RSpec.describe Bindup do
 
   it "does calls a DELETE urlencoded API endpoint" do
     response_body, response_headers = Bindup::Telco::V2.second_test_api(params: { test: "test" })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
+  it "does calls a DELETE urlencoded API endpoint without named parameters" do
+    response_body, response_headers = Bindup::Telco::V2.second_test_api({ test: "test" })
 
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
