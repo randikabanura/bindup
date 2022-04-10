@@ -1,6 +1,7 @@
 module Bindup
   module ServiceMethods
-    HTTP_METHOD_BODY_NOT_SUPPORTED = %w[get head trace delete].freeze
+    METHODS_WITH_QUERY = %w[get head delete trace].freeze
+    METHODS_WITH_BODY = %w[post put patch].freeze
 
     private
 
@@ -94,7 +95,7 @@ module Bindup
     def build_params(version_class)
       version_class.define_singleton_method(:build_params) do |options, params|
         return params if params.blank? || options.blank? || options["type"].blank?
-        return params if options["http_method"].present? && HTTP_METHOD_BODY_NOT_SUPPORTED.include?(options["http_method"])
+        return params if options["http_method"].present? && METHODS_WITH_QUERY.include?(options["http_method"])
 
         case options["type"].downcase
         when "json"
