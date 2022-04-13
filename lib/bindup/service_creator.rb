@@ -3,6 +3,8 @@
 module Bindup
   module ServiceCreator
     class << self
+      HTTP_METHOD_BODY_NOT_SUPPORTED = %w[get head trace delete].freeze
+
       def execute
         services = component_setup_keys
         components = component_setup
@@ -118,13 +120,14 @@ module Bindup
 
       def build_options(version_class)
         version_class.define_singleton_method(:build_options) do |api|
-          { "base_url" => api["base_url"], "type" => (api["type"]) }
+          { "base_url" => api["base_url"], "type" => (api["type"]), "http_method" => api["verb"].downcase }
         end
       end
 
       def build_params(version_class)
         version_class.define_singleton_method(:build_params) do |options, params|
-          return params if params.blank?
+          return params if params.blank? || options.blank? || options["type"].blank?
+          return params if options["http_method"].present? && HTTP_METHOD_BODY_NOT_SUPPORTED.include?(options["http_method"])
 
           case options["type"].downcase
           when "json"
@@ -141,6 +144,8 @@ module Bindup
 
       def build_headers(version_class)
         version_class.define_singleton_method(:build_headers) do |options, headers|
+          return headers if options.blank? || options["type"].blank?
+
           headers = {} if headers.blank?
 
           case options["type"].downcase
