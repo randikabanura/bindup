@@ -73,4 +73,18 @@ RSpec.describe Bindup do
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
   end
+
+  it "does calls a DELETE json API endpoint" do
+    response_body, response_headers = Bindup::Telco::V2.third_test_api(params: { test: "test" })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
+  it "does calls a DELETE urlencoded API endpoint" do
+    response_body, response_headers = Bindup::Telco::V2.second_test_api(params: { test: "test" })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
 end
