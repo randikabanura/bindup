@@ -8,7 +8,7 @@ components:
         apis:
           - name: "first_test_api"
             url: "public/v2/posts"
-            base_url: "http://endpoint-3.bssmw.com"
+            base_url: "https://gorest.co.in"
             verb: "GET"
             type: "json"
           - name: "second_test_api"
@@ -16,11 +16,16 @@ components:
             url: "post"
             verb: "POST"
             type: "json"
-          - name: "second_test_api"
+          - name: "third_test_api"
             base_url: "https://httpbin.org"
             url: "post"
             verb: "POST"
             type: "urlencoded"
+          - name: "fourth_test_api"
+            base_url: "https://httpbin.org"
+            url: "put"
+            verb: "PUT"
+            type: "json"
   telco:
     name: 'Telco'
     version:
@@ -28,9 +33,10 @@ components:
         base_url: 'https://gorest.co.in'
         apis:
           - name: "first_test_api"
-            url: "public/v2/todos"
-            verb: "GET"
-            type: "json"
+            base_url: "https://httpbin.org"
+            url: "put"
+            verb: "PUT"
+            type: "urlencoded"
           - name: "second_test_api"
             url: "public/v2/users"
             verb: "GET"
