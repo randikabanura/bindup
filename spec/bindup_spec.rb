@@ -47,15 +47,28 @@ RSpec.describe Bindup do
 
   it "does calls a POST json API endpoint" do
     response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/json" },
-                                                                        params: { test: "test " })
+                                                                        params: { test: "test" })
 
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
   end
 
   it "does calls a POST urlencoded API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/x-www-form-urlencoded" },
-                                                                        params: { test: "test " })
+    response_body, response_headers = Bindup::BSSMW::V1.third_test_api(params: { test: "test" })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
+  it "does calls a PUT json API endpoint" do
+    response_body, response_headers = Bindup::BSSMW::V1.fourth_test_api(params: { test: "test" })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
+  it "does calls a PUT urlencoded API endpoint" do
+    response_body, response_headers = Bindup::Telco::V2.first_test_api(params: { test: "test" })
 
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
