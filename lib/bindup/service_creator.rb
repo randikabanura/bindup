@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "faraday"
-
 module Bindup
   module ServiceCreator
     class << self
@@ -28,6 +26,7 @@ module Bindup
             build_options(version_class)
             build_client(version_class)
             build_params(version_class)
+            build_headers(version_class)
             api_methods(version_class, version)
             methods_as_private(version_class)
           end
@@ -54,17 +53,17 @@ module Bindup
 
       def api_endpoint(version_class, service, version)
         version_class.define_singleton_method(:set_api_endpoint_by_service) do
-          version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] } unless service["base_url"].nil?
+          version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] } if service["base_url"].present?
         end
 
         version_class.define_singleton_method(:set_api_endpoint_by_version) do
-          version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] } unless version["base_url"].nil?
+          version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] } if version["base_url"].present?
         end
       end
 
       def faraday_client(version_class)
         version_class.define_singleton_method(:client) do |options:|
-          return version_class.send(:build_client, options: options) unless options.nil?
+          return version_class.send(:build_client, options: options) if options.present?
 
           @client ||= version_class.send(:build_client)
         end
@@ -73,6 +72,7 @@ module Bindup
       def request(version_class)
         version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil, options: nil|
           params = version_class.send(:build_params, options, params)
+          headers = version_class.send(:build_headers, options, headers)
 
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
           [response&.body, response&.headers]
@@ -81,10 +81,10 @@ module Bindup
 
       def log_response_params(version_class)
         version_class.define_singleton_method(:log_response_params) do
-          if Bindup.configuration.log_response_params.nil?
-            { headers: true, bodies: true }
-          else
+          if Bindup.configuration.log_response_params.present?
             Bindup.configuration.log_response_params
+          else
+            { headers: true, bodies: true }
           end
         end
       end
@@ -100,14 +100,14 @@ module Bindup
       def api_methods(version_class, version)
         version["apis"].each do |api|
           version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
-            version_class.send(:request_method_build, api: api, params: params, headers: headers)
+            version_class.send(:request_method_build, api: api, params: params.stringify_keys, headers: headers.stringify_keys)
           end
         end
       end
 
       def build_client(version_class)
         version_class.define_singleton_method(:build_client) do |options:|
-          url = options.nil? || options["base_url"].nil? ? version_class.API_ENDPOINT : options["base_url"]
+          url = (options.present? && options["base_url"].present?) ? options["base_url"] : version_class.API_ENDPOINT
 
           Faraday.new(url) do |client|
             client.response :logger, nil, version_class.send(:log_response_params) if Bindup.configuration.log_response
@@ -135,10 +135,23 @@ module Bindup
         end
       end
 
+      def build_headers(version_class)
+        version_class.define_singleton_method(:build_headers) do |options, headers|
+          case options["type"].downcase
+          when "json"
+            headers
+          when "urlencoded"
+            headers
+          else
+            headers
+          end
+        end
+      end
+
       def methods_as_private(version_class)
         version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
                                            :set_api_endpoint_by_service, :set_api_endpoint_by_version, :build_client,
-                                           :build_options, :build_params
+                                           :build_options, :build_params, :build_headers
       end
     end
   end
