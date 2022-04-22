@@ -27,6 +27,7 @@ module Bindup
 
             build_options(version_class)
             build_client(version_class)
+            build_params(version_class)
             api_methods(version_class, version)
             methods_as_private(version_class)
           end
@@ -71,6 +72,8 @@ module Bindup
 
       def request(version_class)
         version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil, options: nil|
+          params = version_class.send(:build_params, options, params)
+
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
           [response&.body, response&.headers]
         end
@@ -115,7 +118,18 @@ module Bindup
 
       def build_options(version_class)
         version_class.define_singleton_method(:build_options) do |api|
-          { "base_url" => api["base_url"] }
+          { "base_url" => api["base_url"], "type" => (api["type"]) }
+        end
+      end
+
+      def build_params(version_class)
+        version_class.define_singleton_method(:build_params) do |options, params|
+          case options["type"].downcase
+          when "json"
+            params.to_json
+          else
+            params
+          end
         end
       end
 

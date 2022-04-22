@@ -38,15 +38,16 @@ RSpec.describe Bindup do
     expect(telco_api_endpoint).to eq("https://gorest.co.in")
   end
 
-  it "does calls a first API endpoint" do
+  it "does calls a GET API endpoint" do
     response_body, response_headers = Bindup::BSSMW::V1.first_test_api
 
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
   end
 
-  it "does calls a second API endpoint" do
-    response_body, response_headers = Bindup::BSSMW::V1.second_test_api
+  it "does calls a POST API endpoint" do
+    response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/json" },
+                                                                        params: { test: "test " })
 
     expect(response_body).not_to eq(nil)
     expect(response_headers).not_to eq(nil)
