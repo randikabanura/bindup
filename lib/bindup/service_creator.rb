@@ -70,7 +70,8 @@ module Bindup
 
       def request(version_class)
         version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil|
-          version_class.send(:client).send(http_method, endpoint, params, headers)
+          response = version_class.send(:client).send(http_method, endpoint, params, headers)
+          [response&.body, response.headers]
         end
       end
 

@@ -39,8 +39,9 @@ RSpec.describe Bindup do
   end
 
   it "does calls a API endpoint" do
-    response = Bindup::BSSMW::V1.first_test_api
-    response_body = response.body
+    response_body, response_headers = Bindup::BSSMW::V1.first_test_api
+
     expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
   end
 end
