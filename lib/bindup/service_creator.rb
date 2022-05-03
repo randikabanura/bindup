@@ -11,7 +11,7 @@ module Bindup
 
         services.each do |service|
           versions = components[service]["version"]
-          service_module = Bindup.const_set(components[service]["name"], Module.new)
+          service_module = create_service_module(components, service)
 
           versions.each do |version|
             version_class = create_version_class(service_module, version)
@@ -39,6 +39,10 @@ module Bindup
 
       def component_setup
         Bindup.component_setup["components"]
+      end
+
+      def create_service_module(components, service)
+        Bindup.const_set(components[service]["name"], Module.new)
       end
 
       def create_version_class(service_module, version)
