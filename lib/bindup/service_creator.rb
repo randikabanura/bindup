@@ -14,7 +14,7 @@ module Bindup
           service_module = Bindup.const_set(components[service]["name"], Module.new)
 
           versions.each do |version|
-            version_class = version_class_by_service(service_module, version)
+            version_class = create_version_class(service_module, version)
 
             api_endpoint(version_class, service, version)
             faraday_client(version_class)
@@ -41,7 +41,7 @@ module Bindup
         Bindup.component_setup["components"]
       end
 
-      def version_class_by_service(service_module, version)
+      def create_version_class(service_module, version)
         service_module.const_set(version["name"], Class.new)
       end
 
