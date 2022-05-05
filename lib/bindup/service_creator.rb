@@ -26,9 +26,7 @@ module Bindup
             version_class.send(:set_api_endpoint_by_version)
 
             api_methods(version_class, version)
-
-            version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
-                                               :set_api_endpoint_by_service, :set_api_endpoint_by_version
+            methods_as_private(version_class)
           end
         end
       end
@@ -95,6 +93,11 @@ module Bindup
             version_class.send(:request_method_build, api: api, params: params, headers: headers)
           end
         end
+      end
+
+      def methods_as_private(version_class)
+        version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
+                                           :set_api_endpoint_by_service, :set_api_endpoint_by_version
       end
     end
   end
