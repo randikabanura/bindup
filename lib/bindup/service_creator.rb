@@ -14,7 +14,7 @@ module Bindup
           service_module = Bindup.const_set(components[service]["name"], Module.new)
 
           versions.each do |version|
-            version_class = service_module.const_set(version["name"], Class.new)
+            version_class = version_class_by_service(service_module, version)
 
             api_endpoint(version_class, service, version)
             faraday_client(version_class)
@@ -22,15 +22,10 @@ module Bindup
             log_response_params(version_class)
             request_method_build(version_class)
 
-
             version_class.send(:set_api_endpoint_by_service)
             version_class.send(:set_api_endpoint_by_version)
 
-            version["apis"].each do |api|
-              version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
-                version_class.send(:request_method_build, api: api, params: params, headers: headers)
-              end
-            end
+            api_methods(version_class, version)
 
             version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
                                                :set_api_endpoint_by_service, :set_api_endpoint_by_version
@@ -46,6 +41,10 @@ module Bindup
 
       def component_setup
         Bindup.component_setup["components"]
+      end
+
+      def version_class_by_service(service_module, version)
+        service_module.const_set(version["name"], Class.new)
       end
 
       def api_endpoint(version_class, service, version)
@@ -87,6 +86,14 @@ module Bindup
         version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil|
           version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
                                        params: params, headers: headers)
+        end
+      end
+
+      def api_methods(version_class, version)
+        version["apis"].each do |api|
+          version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
+            version_class.send(:request_method_build, api: api, params: params, headers: headers)
+          end
         end
       end
     end
