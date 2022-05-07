@@ -20,12 +20,8 @@ module Bindup
             faraday_client(version_class)
             request(version_class)
             log_response_params(version_class)
+            request_method_build(version_class)
 
-
-            version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil|
-              version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
-                                           params: params, headers: headers)
-            end
 
             version_class.send(:set_api_endpoint_by_service)
             version_class.send(:set_api_endpoint_by_version)
@@ -84,6 +80,13 @@ module Bindup
           else
             Bindup.configuration.log_response_params
           end
+        end
+      end
+
+      def request_method_build(version_class)
+        version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil|
+          version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
+                                       params: params, headers: headers)
         end
       end
     end
