@@ -16,30 +16,9 @@ module Bindup
           versions.each do |version|
             version_class = service_module.const_set(version["name"], Class.new)
 
-            version_class.define_singleton_method(:set_api_endpoint_by_service) do
-              unless service["base_url"].nil?
-                version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] }
-              end
-            end
-
-            version_class.define_singleton_method(:set_api_endpoint_by_version) do
-              unless version["base_url"].nil?
-                version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] }
-              end
-            end
-
-            version_class.define_singleton_method(:client) do
-              @client ||= Faraday.new(version_class.API_ENDPOINT) do |client|
-                if Bindup.configuration.log_response
-                  client.response :logger, nil, version_class.send(:log_response_params)
-                end
-                client.adapter Faraday.default_adapter
-              end
-            end
-
-            version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil|
-              version_class.send(:client).send(http_method, endpoint, params, headers)
-            end
+            api_endpoint(version_class, service, version)
+            faraday_client(version_class)
+            request(version_class)
 
             version_class.define_singleton_method(:log_response_params) do
               if Bindup.configuration.log_response_params.nil?
@@ -77,6 +56,31 @@ module Bindup
 
       def component_setup
         Bindup.component_setup["components"]
+      end
+
+      def api_endpoint(version_class, service, version)
+        version_class.define_singleton_method(:set_api_endpoint_by_service) do
+          version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] } unless service["base_url"].nil?
+        end
+
+        version_class.define_singleton_method(:set_api_endpoint_by_version) do
+          version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] } unless version["base_url"].nil?
+        end
+      end
+
+      def faraday_client(version_class)
+        version_class.define_singleton_method(:client) do
+          @client ||= Faraday.new(version_class.API_ENDPOINT) do |client|
+            client.response :logger, nil, version_class.send(:log_response_params) if Bindup.configuration.log_response
+            client.adapter Faraday.default_adapter
+          end
+        end
+      end
+
+      def request(version_class)
+        version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil|
+          version_class.send(:client).send(http_method, endpoint, params, headers)
+        end
       end
     end
   end
