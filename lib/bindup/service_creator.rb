@@ -63,7 +63,8 @@ module Bindup
               end
             end
 
-            version_class.private_class_method :log_response_params, :request, :client, :request_method_build
+            version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
+                                               :set_api_endpoint_by_service, :set_api_endpoint_by_version
           end
         end
       end
