@@ -16,28 +16,29 @@ module Bindup
           versions.each do |version|
             version_class = service_module.const_set(version["name"], Class.new)
 
-            version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] } unless service["base_url"].nil?
-            version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] } unless version["base_url"].nil?
-
-            version["apis"].each do |api|
-              version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
-                version_class.public_send(:request_method_build, api: api, params: params, headers: headers)
+            version_class.define_singleton_method(:set_api_endpoint_by_service) do
+              unless service["base_url"].nil?
+                version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] }
               end
             end
 
-            private
+            version_class.define_singleton_method(:set_api_endpoint_by_version) do
+              unless version["base_url"].nil?
+                version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] }
+              end
+            end
 
             version_class.define_singleton_method(:client) do
               @client ||= Faraday.new(version_class.API_ENDPOINT) do |client|
                 if Bindup.configuration.log_response
-                  client.response :logger, nil, version_class.public_send(:log_response_params)
+                  client.response :logger, nil, version_class.send(:log_response_params)
                 end
                 client.adapter Faraday.default_adapter
               end
             end
 
             version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil|
-              version_class.public_send(:client).public_send(http_method, endpoint, params, headers)
+              version_class.send(:client).send(http_method, endpoint, params, headers)
             end
 
             version_class.define_singleton_method(:log_response_params) do
@@ -52,6 +53,17 @@ module Bindup
               version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
                                            params: params, headers: headers)
             end
+
+            version_class.send(:set_api_endpoint_by_service)
+            version_class.send(:set_api_endpoint_by_version)
+
+            version["apis"].each do |api|
+              version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
+                version_class.send(:request_method_build, api: api, params: params, headers: headers)
+              end
+            end
+
+            version_class.private_class_method :log_response_params, :request, :client, :request_method_build
           end
         end
       end
