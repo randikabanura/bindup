@@ -11,10 +11,11 @@ module Bindup
 
         services.each do |service|
           versions = components[service]["version"]
-
           service_module = Bindup.const_set(components[service]["name"], Module.new)
+
           versions.each do |version|
             version_class = service_module.const_set(version["name"], Class.new)
+
             version_class.define_singleton_method("API_ENDPOINT") { service["base_url"] } unless service["base_url"].nil?
             version_class.define_singleton_method("API_ENDPOINT") { version["base_url"] } unless version["base_url"].nil?
 
@@ -28,7 +29,9 @@ module Bindup
 
             version_class.define_singleton_method(:client) do
               @client ||= Faraday.new(version_class.API_ENDPOINT) do |client|
-                client.response :logger, nil, version_class.public_send(:log_response_params) if Bindup.configuration.log_response
+                if Bindup.configuration.log_response
+                  client.response :logger, nil, version_class.public_send(:log_response_params)
+                end
                 client.adapter Faraday.default_adapter
               end
             end
