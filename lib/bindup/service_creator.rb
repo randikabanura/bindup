@@ -27,7 +27,7 @@ module Bindup
             private
 
             version_class.define_singleton_method(:client) do
-              Faraday.new(version_class.API_ENDPOINT) do |client|
+              @client ||= Faraday.new(version_class.API_ENDPOINT) do |client|
                 client.response :logger, nil, version_class.public_send(:log_response_params) if Bindup.configuration.log_response
                 client.adapter Faraday.default_adapter
               end
