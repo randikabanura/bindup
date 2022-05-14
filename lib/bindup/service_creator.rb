@@ -6,8 +6,8 @@ module Bindup
   module ServiceCreator
     class << self
       def execute
-        services = Bindup.component_setup["components"].keys
-        components = Bindup.component_setup["components"]
+        services = component_setup_keys
+        components = component_setup
 
         services.each do |service|
           versions = components[service]["version"]
@@ -20,8 +20,7 @@ module Bindup
 
             version["apis"].each do |api|
               version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
-                version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
-                                             params: params, headers: headers)
+                version_class.public_send(:request_method_build, api: api, params: params, headers: headers)
               end
             end
 
@@ -45,8 +44,23 @@ module Bindup
                 Bindup.configuration.log_response_params
               end
             end
+
+            version_class.define_singleton_method(:request_method_build) do |api:, params: nil, headers: nil|
+              version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
+                                           params: params, headers: headers)
+            end
           end
         end
+      end
+
+      private
+
+      def component_setup_keys
+        Bindup.component_setup["components"].keys || []
+      end
+
+      def component_setup
+        Bindup.component_setup["components"]
       end
     end
   end
