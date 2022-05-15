@@ -8,11 +8,6 @@ module Bindup
       def execute
         services = Bindup.component_setup["components"].keys
         components = Bindup.component_setup["components"]
-        log_response_params = if Bindup.configuration.log_response_params.nil?
-                                { headers: true, bodies: true }
-                              else
-                                Bindup.configuration.log_response_params
-                              end
 
         services.each do |service|
           versions = components[service]["version"]
@@ -26,7 +21,7 @@ module Bindup
             version["apis"].each do |api|
               version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
                 version_class.send(:request, http_method: api["verb"].downcase.to_sym, endpoint: api["url"],
-                                   params: params, headers: headers)
+                                             params: params, headers: headers)
               end
             end
 
@@ -34,13 +29,21 @@ module Bindup
 
             version_class.define_singleton_method(:client) do
               Faraday.new(version_class.API_ENDPOINT) do |client|
-                client.response :logger, nil, log_response_params if Bindup.configuration.log_response
+                client.response :logger, nil, version_class.public_send(:log_response_params) if Bindup.configuration.log_response
                 client.adapter Faraday.default_adapter
               end
             end
 
             version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil|
               version_class.public_send(:client).public_send(http_method, endpoint, params, headers)
+            end
+
+            version_class.define_singleton_method(:log_response_params) do
+              if Bindup.configuration.log_response_params.nil?
+                { headers: true, bodies: true }
+              else
+                Bindup.configuration.log_response_params
+              end
             end
           end
         end
