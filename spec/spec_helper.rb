@@ -16,4 +16,6 @@ end
 
 Bindup.configure do |config|
   config.config_path = './spec/config/config.yml'
+  config.log_response = true
+  config.log_response_params = { headers: true, bodies: true }
 end
