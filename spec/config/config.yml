@@ -1,0 +1,32 @@
+components:
+  bssmw:
+    name: 'BSSMW'
+    base_url: 'https://gorest.co.in'
+    version:
+      - name: 'V1'
+        base_url: 'https://gorest.co.in'
+        apis:
+          - name: "first_test_api"
+            url: "public/v2/posts"
+            base_url: "http://endpoint-3.bssmw.com"
+            verb: "GET"
+            type: "json"
+          - name: "second_test_api"
+            url: "public/v2/comments"
+            base_url: "endpoint-4.bssmw.com"
+            verb: "GET"
+            type: "json"
+  telco:
+    name: 'Telco'
+    version:
+      - name: 'V2'
+        base_url: 'https://gorest.co.in'
+        apis:
+          - name: "first_test_api"
+            url: "public/v2/todos"
+            verb: "GET"
+            type: "json"
+          - name: "second_test_api"
+            url: "public/v2/users"
+            verb: "GET"
+            type: "json"
