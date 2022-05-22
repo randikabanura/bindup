@@ -45,8 +45,16 @@ RSpec.describe Bindup do
     expect(response_headers).not_to eq(nil)
   end
 
-  it "does calls a POST API endpoint" do
+  it "does calls a POST json API endpoint" do
     response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/json" },
+                                                                        params: { test: "test " })
+
+    expect(response_body).not_to eq(nil)
+    expect(response_headers).not_to eq(nil)
+  end
+
+  it "does calls a POST urlencoded API endpoint" do
+    response_body, response_headers = Bindup::BSSMW::V1.second_test_api(headers: { content_type: "application/x-www-form-urlencoded" },
                                                                         params: { test: "test " })
 
     expect(response_body).not_to eq(nil)

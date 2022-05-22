@@ -127,6 +127,8 @@ module Bindup
           case options["type"].downcase
           when "json"
             params.to_json
+          when "urlencoded"
+            URI.encode_www_form(params)
           else
             params
           end
@@ -136,7 +138,7 @@ module Bindup
       def methods_as_private(version_class)
         version_class.private_class_method :log_response_params, :request, :client, :request_method_build,
                                            :set_api_endpoint_by_service, :set_api_endpoint_by_version, :build_client,
-                                           :build_options
+                                           :build_options, :build_params
       end
     end
   end
