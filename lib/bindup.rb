@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "bindup/version"
-require_relative "bindup/service_creator"
-require_relative "bindup/configuration"
-require "yaml"
+require_relative "bindup/bindup"
 
 # Bindup is customizable API wrapper
 #
@@ -13,5 +10,4 @@ require "yaml"
 # setup multiple services at once so that integrating whole new service
 # is easy as changing the config
 module Bindup
-  extend Configuration
 end
