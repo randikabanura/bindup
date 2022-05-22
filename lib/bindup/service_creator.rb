@@ -100,14 +100,14 @@ module Bindup
       def api_methods(version_class, version)
         version["apis"].each do |api|
           version_class.define_singleton_method(api["name"].to_sym) do |params: nil, headers: nil|
-            version_class.send(:request_method_build, api: api, params: params.stringify_keys, headers: headers.stringify_keys)
+            version_class.send(:request_method_build, api: api, params: params&.stringify_keys, headers: headers&.stringify_keys)
           end
         end
       end
 
       def build_client(version_class)
         version_class.define_singleton_method(:build_client) do |options:|
-          url = (options.present? && options["base_url"].present?) ? options["base_url"] : version_class.API_ENDPOINT
+          url = options.present? && options["base_url"].present? ? options["base_url"] : version_class.API_ENDPOINT
 
           Faraday.new(url) do |client|
             client.response :logger, nil, version_class.send(:log_response_params) if Bindup.configuration.log_response
@@ -124,27 +124,35 @@ module Bindup
 
       def build_params(version_class)
         version_class.define_singleton_method(:build_params) do |options, params|
+          return params if params.blank?
+
           case options["type"].downcase
           when "json"
-            params.to_json
+            params = params.to_json
           when "urlencoded"
-            URI.encode_www_form(params)
+            params = URI.encode_www_form(params)
           else
             params
           end
+
+          params
         end
       end
 
       def build_headers(version_class)
         version_class.define_singleton_method(:build_headers) do |options, headers|
+          headers = {} if headers.blank?
+
           case options["type"].downcase
           when "json"
-            headers
+            headers.merge!({ "Content-Type" => "application/json" }) unless headers.key?("Content-Type")
           when "urlencoded"
-            headers
+            headers.merge!({ "Content-Type" => "application/x-www-form-urlencoded" }) unless headers.key?("Content-Type")
           else
             headers
           end
+
+          headers
         end
       end
 
