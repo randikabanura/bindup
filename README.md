@@ -18,6 +18,39 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 TODO: Write usage instructions here
 
+### Basic config.yml
+
+```yaml
+components:
+  bssmw:
+    name: 'BSSMW'
+    base_url: 'https://gorest.co.in'
+    version:
+      - name: 'V1'
+        base_url: 'https://gorest.co.in'
+        apis:
+          - name: "first_test_api"
+            url: "get"
+            base_url: "https://httpbin.org"
+            verb: "GET"
+            type: "json"
+          - name: "second_test_api"
+            base_url: "https://httpbin.org"
+            url: "post"
+            verb: "POST"
+            type: "json"
+          - name: "third_test_api"
+            base_url: "https://httpbin.org"
+            url: "post"
+            verb: "POST"
+            type: "urlencoded"
+          - name: "fourth_test_api"
+            base_url: "https://httpbin.org"
+            url: "put"
+            verb: "PUT"
+            type: "json"
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
