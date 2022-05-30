@@ -153,6 +153,8 @@ response_body, = Bindup::Telco::V2.third_test_api(params, extra_params: params)
 
 #### Put APIs
 
+This methods will response with `response_body` and `response_headers`.
+
 ```ruby
 # Which calls the API without any parameters
 response_body, = Bindup::BSSMW::V1.fourth_test_api
