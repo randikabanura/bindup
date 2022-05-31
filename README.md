@@ -138,29 +138,36 @@ response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "ap
 This methods will response with `response_body` and `response_status`.
 
 ```ruby
+#  Which calls the API with parameters
 params = { test: "test" }
-response_body, = Bindup::Telco::V2.third_test_api(params) #  Which calls the API with parameters
+response_body, = Bindup::Telco::V2.third_test_api(params)
 
+# Which calls the urlencoded API with parameters
 params = { test: "test" }
-response_body, = Bindup::Telco::V2.second_test_api(params) # Which calls the urlencoded API with parameters
+response_body, = Bindup::Telco::V2.second_test_api(params)
 
+# Which calls the API with parameters and extra parameters for the body
 params = { test: "test" }
-response_body, = Bindup::Telco::V2.third_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the body
+response_body, = Bindup::Telco::V2.third_test_api(params, extra_params: params)
 ```
 
 #### Put APIs
 
 ```ruby
-response_body, = Bindup::BSSMW::V1.fourth_test_api # Which calls the API without any parameters
+# Which calls the API without any parameters
+response_body, = Bindup::BSSMW::V1.fourth_test_api
 
+# Which calls the API with parameters
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.fourth_test_api(params)  # Which calls the API with parameters
+response_body, = Bindup::BSSMW::V1.fourth_test_api(params)
 
+# Which calls the urlencoded API with parameters
 params = { test: "test" }
-response_body, = Bindup::Telco::V2.first_test_api(params) # Which calls the urlencoded API with parameters
+response_body, = Bindup::Telco::V2.first_test_api(params)
 
+# Which calls the urlencoded API with parameters and extra parameters for the query params
 params = { test: "test" }
-response_body, = Bindup::Telco::V2.first_test_api(params, extra_params: params) # Which calls the urlencoded API with parameters and extra parameters for the query params
+response_body, = Bindup::Telco::V2.first_test_api(params, extra_params: params)
 ```
 
 ## Do you like it? Star it!
