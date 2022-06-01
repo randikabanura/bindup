@@ -113,19 +113,24 @@ response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params)
 This methods will response with `response_body` and `response_status`.
 
 ```ruby
-response_body, = Bindup::BSSMW::V1.second_test_api # Which calls the API without any parameters
+# Which calls the API without any parameters
+response_body, = Bindup::BSSMW::V1.second_test_api
 
+# Which calls the urlencoded API with parameters
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.third_test_api(params) # Which calls the urlencoded API with parameters
+response_body, = Bindup::BSSMW::V1.third_test_api(params)
 
+# Which calls the API with parameters with headers and extra parameters for the query params
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" }, extra_params: params) # Which calls the API with parameters with headers and extra parameters for the query params
+response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" }, extra_params: params)
 
+# Which calls the API with parameters and extra parameters for the query params
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.third_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the query params
+response_body, = Bindup::BSSMW::V1.third_test_api(params, extra_params: params)
 
+# Which calls the API with parameters and headers
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" })  # Which calls the API with parameters and headers
+response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" })
 ```
 
 #### Delete Apis
