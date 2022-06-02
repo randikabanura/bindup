@@ -96,13 +96,16 @@ After setting config like as format given above the APIs would be usable as foll
 This methods will response with `response_body` and `response_status`.
 
 ```ruby
-response_body, = Bindup::BSSMW::V1.first_test_api # Which calls the API without any parameters
+# Which calls the API without any parameters
+response_body, = Bindup::BSSMW::V1.first_test_api
 
+# Which calls the urlencoded API with parameters
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.fifth_test_api(params) # Which calls the urlencoded API with parameters
+response_body, = Bindup::BSSMW::V1.fifth_test_api(params)
 
+# Which calls the API with parameters and extra parameters for the body
 params = { test: "test" }
-response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the body
+response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params)
 ```
 
 #### Post APIs
