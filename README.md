@@ -64,13 +64,34 @@ components:
             url: "put"
             verb: "PUT"
             type: "json"
+  telco:
+      name: 'Telco'
+      version:
+        - name: 'V2'
+          base_url: 'https://gorest.co.in'
+          apis:
+            - name: "first_test_api"
+              base_url: "https://httpbin.org"
+              url: "put"
+              verb: "PUT"
+              type: "urlencoded"
+            - name: "second_test_api"
+              base_url: "https://httpbin.org"
+              url: "delete"
+              verb: "DELETE"
+              type: "urlencoded"
+            - name: "third_test_api"
+              base_url: "https://httpbin.org"
+              url: "delete"
+              verb: "DELETE"
+              type: "json"
 ```
 
 ### Basic usage
 
 After setting config like as format given above the APIs would be usable as following.
 
-#### Get API
+#### Get APIs
 
 This methods will response with `response_body` and `response_status`.
 
@@ -84,6 +105,55 @@ params = { test: "test" }
 response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the body
 ```
 
+#### Post APIs
+
+This methods will response with `response_body` and `response_status`.
+
+```ruby
+response_body, = Bindup::BSSMW::V1.second_test_api # Which calls the API without any parameters
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.third_test_api(params) # Which calls the urlencoded API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" }, extra_params: params) # Which calls the API with parameters with headers and extra parameters for the query params
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.third_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the query params
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" })  # Which calls the API with parameters and headers
+```
+
+#### Delete Apis
+
+This methods will response with `response_body` and `response_status`.
+
+```ruby
+params = { test: "test" }
+response_body, = Bindup::Telco::V2.third_test_api(params) #  Which calls the API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::Telco::V2.second_test_api(params) # Which calls the urlencoded API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::Telco::V2.third_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the body
+```
+
+#### Put APIs
+
+```ruby
+response_body, = Bindup::BSSMW::V1.fourth_test_api # Which calls the API without any parameters
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.fourth_test_api(params)  # Which calls the API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::Telco::V2.first_test_api(params) # Which calls the urlencoded API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::Telco::V2.first_test_api(params, extra_params: params) # Which calls the urlencoded API with parameters and extra parameters for the query params
+```
 
 ## Do you like it? Star it!
 
