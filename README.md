@@ -18,7 +18,20 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+To use this gem please create a configure file for the gem. If using rails 
+preferred location would be `./config/initializers/bindup.rb`. Whatever the location
+config should be as followed:
+
+```ruby
+Bindup.configure do |config|
+  config.config_path = "./spec/config/config.yml"
+  config.log_response = true
+  config.log_response_params = { headers: true, bodies: true }
+end
+```
+
+You can and should change these configurations as necessary. Config path should be given to
+`config.yml` that consists of your APIs.
 
 ### Basic config.yml
 
@@ -53,15 +66,28 @@ components:
             type: "json"
 ```
 
+### Basic usage
+
+After setting config like as format given above the APIs would be usable as following.
+
+#### Get API
+
+This methods will response with `response_body` and `response_status`.
+
+```ruby
+response_body, = Bindup::BSSMW::V1.first_test_api # Which calls the API without any parameters
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.fifth_test_api(params) # Which calls the urlencoded API with parameters
+
+params = { test: "test" }
+response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params) # Which calls the API with parameters and extra parameters for the body
+```
+
+
 ## Do you like it? Star it!
 
 If you use this component just star it. A developer is more motivated to improve a project when there is some interest.
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
