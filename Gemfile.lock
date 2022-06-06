@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bindup (0.1.0)
+    bindup (0.0.1)
       activesupport (~> 7.0, >= 7.0.3)
       faraday (~> 2.3.0)
 
