@@ -44,11 +44,11 @@ module Bindup
         params = version_class.send(:build_params, options, params)
         headers = version_class.send(:build_headers, options, headers)
         if METHODS_WITH_QUERY.include?(http_method.to_s)
-          body = version_class.send(:build_body, options, options["body"], force_build: true)
+          extra_params = version_class.send(:build_body, options, options["extra_params"], force_build: true)
         end
 
-        if body.present? && METHODS_WITH_QUERY.include?(http_method.to_s)
-          response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) { |req| req.body = body }
+        if extra_params.present? && METHODS_WITH_QUERY.include?(http_method.to_s)
+          response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) { |req| req.body = extra_params }
         else
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
         end
