@@ -1,8 +1,10 @@
 # Bindup (Customizable API Wrapper)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/bindup`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Bindup is able to wrap API from other services so the Ruby application
+use those API with out having to implement a new module to deal with
+every single API or having to create a gem. Bindup will be able to
+setup multiple services at once so that integrating whole new service
+is easy as changing the config
 
 ## Installation
 
