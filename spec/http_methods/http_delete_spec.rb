@@ -17,7 +17,7 @@ RSpec.describe "HTTP::DELETE" do
     expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
-  it "does calls a DELETE urlencoded API endpoint with form payload" do
+  it "does calls a DELETE urlencoded API endpoint with extra parameters" do
     params = { test: "test" }
     response_body, = Bindup::Telco::V2.second_test_api(params, extra_params: params)
 
@@ -26,7 +26,7 @@ RSpec.describe "HTTP::DELETE" do
     expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
-  it "does calls a DELETE json API endpoint with json payload" do
+  it "does calls a DELETE json API endpoint with extra parameters" do
     params = { test: "test" }
     response_body, = Bindup::Telco::V2.third_test_api(params, extra_params: params)
 
