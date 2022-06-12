@@ -43,7 +43,9 @@ module Bindup
       version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil, options: nil|
         params = version_class.send(:build_params, options, params)
         headers = version_class.send(:build_headers, options, headers)
-        body = version_class.send(:build_body, options, options["body"], force_build: true) if METHODS_WITH_QUERY.include?(http_method.to_s)
+        if METHODS_WITH_QUERY.include?(http_method.to_s)
+          body = version_class.send(:build_body, options, options["body"], force_build: true)
+        end
 
         if body.present? && METHODS_WITH_QUERY.include?(http_method.to_s)
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) { |req| req.body = body }
@@ -101,7 +103,9 @@ module Bindup
     def build_params(version_class)
       version_class.define_singleton_method(:build_params) do |options, params, force_build: false|
         return params if params.blank? || options.blank? || options["type"].blank?
-        return params if !force_build && options["http_method"].present? && METHODS_WITH_QUERY.include?(options["http_method"])
+        if !force_build && options["http_method"].present? && METHODS_WITH_QUERY.include?(options["http_method"])
+          return params
+        end
 
         case options["type"].downcase
         when "json"
