@@ -42,6 +42,15 @@ RSpec.describe "HTTP::POST" do
     expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/x-www-form-urlencoded")
   end
 
+  it "does calls a POST json API endpoint with multiple extra parameters" do
+    params = { test: "test", test2: "test2" }
+    response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "application/test" }, extra_params: params)
+
+    expect(JSON.parse(JSON.parse(response_body)["data"])).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["args"]).to eq(params.stringify_keys)
+    expect(JSON.parse(response_body)["headers"]["Content-Type"]).to eq("application/test")
+  end
+
   it "does calls a POST urlencoded API endpoint with multiple extra parameters" do
     params = { test: "test", test2: "test2" }
     response_body, = Bindup::BSSMW::V1.third_test_api(params, extra_params: params)
