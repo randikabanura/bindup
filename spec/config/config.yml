@@ -26,6 +26,11 @@ components:
             url: "put"
             verb: "PUT"
             type: "json"
+          - name: "fifth_test_api"
+            url: "get"
+            base_url: "https://httpbin.org"
+            verb: "GET"
+            type: "urlencoded"
   telco:
     name: 'Telco'
     version:
