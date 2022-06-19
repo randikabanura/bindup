@@ -43,12 +43,18 @@ module Bindup
       version_class.define_singleton_method(:request) do |http_method:, endpoint:, params: nil, headers: nil, options: nil|
         params = version_class.send(:build_params, options, params)
         headers = version_class.send(:build_headers, options, headers)
-        if METHODS_WITH_QUERY.include?(http_method.to_s)
-          extra_params = version_class.send(:build_body, options, options["extra_params"], force_build: true)
-        end
+        extra_params = if METHODS_WITH_QUERY.include?(http_method.to_s)
+                         version_class.send(:build_body, options, options["extra_params"], force_build: true)
+                       else
+                         options["extra_params"]
+                       end
 
         if extra_params.present? && METHODS_WITH_QUERY.include?(http_method.to_s)
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) { |req| req.body = extra_params }
+        elsif extra_params.present? && METHODS_WITH_BODY.include?(http_method.to_s)
+          response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers) do |req|
+            extra_params.each { |extra_params_key, extra_params_value| req.params[extra_params_key.to_s] = extra_params_value }
+          end
         else
           response = version_class.send(:client, options: options).send(http_method, endpoint, params, headers)
         end
