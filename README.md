@@ -93,7 +93,7 @@ After setting config like as format given above the APIs would be usable as foll
 
 #### Get APIs
 
-This methods will response with `response_body` and `response_status`.
+This methods will response with `response_body` and `response_headers`.
 
 ```ruby
 # Which calls the API without any parameters
@@ -110,7 +110,7 @@ response_body, = Bindup::BSSMW::V1.first_test_api(params, extra_params: params)
 
 #### Post APIs
 
-This methods will response with `response_body` and `response_status`.
+This methods will response with `response_body` and `response_headers`.
 
 ```ruby
 # Which calls the API without any parameters
@@ -135,7 +135,7 @@ response_body, = Bindup::BSSMW::V1.second_test_api(params, { "Content-Type": "ap
 
 #### Delete Apis
 
-This methods will response with `response_body` and `response_status`.
+This methods will response with `response_body` and `response_headers`.
 
 ```ruby
 #  Which calls the API with parameters
